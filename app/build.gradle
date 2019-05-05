@@ -34,10 +34,12 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
     implementation 'com.github.divyanshub024:AndroidDraw:v0.1'
+    //implementation 'com.github.divyanshub024:AndroidDraw:master-SNAPSHOT'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.github.QuadFlask:colorpicker:0.0.13'
     implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0"
     kapt "androidx.lifecycle:lifecycle-compiler:2.0.0"
     implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.karumi:dexter:5.0.0'
 }
