@@ -2,58 +2,57 @@ package com.damianf.paintmobile
 
 
 import android.Manifest
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-
-import com.damianf.paintmobile.viewmodel.MainViewModel
-import kotlinx.android.synthetic.main.activity_main.*
-import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.media.MediaScannerConnection
 import android.net.Uri
+import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.WindowManager
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.damianf.paintmobile.utils.DEFAULT_STROKE
-import com.flask.colorpicker.builder.ColorPickerClickListener
-import com.flask.colorpicker.OnColorSelectedListener
+import com.damianf.paintmobile.viewmodel.MainViewModel
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
+import com.github.nisrulz.sensey.Sensey
+import com.github.nisrulz.sensey.ShakeDetector
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
-import kotlinx.android.synthetic.main.brush_dialog.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.brush_dialog.view.*
-import kotlinx.android.synthetic.main.save_file_dialog.*
 import kotlinx.android.synthetic.main.save_file_dialog.view.*
 import java.io.File
 import java.io.FileOutputStream
-import java.sql.Date
-import java.sql.Time
-import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var viewModel: MainViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        Sensey.getInstance().init(this, Sensey.SAMPLING_PERIOD_UI)
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         bindUI()
+        startShakeListener()
 
+    }
+
+    override fun onDestroy() {
+        Sensey.getInstance().stop()
+        super.onDestroy()
     }
 
     private fun bindUI() {
@@ -65,9 +64,14 @@ class MainActivity : AppCompatActivity() {
         })
         viewModel.color.observe(this, Observer {
             draw_view.setColor(it)
+            imv_brush_color.setBackgroundColor(it)
+        })
+        viewModel.backgroudColor.observe(this, Observer {
+            draw_view.setBackgroundColor(it)
+            imv_bck_color.setBackgroundColor(it)
         })
         fab_colors.setOnClickListener {
-            showColorPicker()
+            showColorPicker(isBrushColor = true)
         }
         fab_brush.setOnClickListener {
             showBrushDialog()
@@ -81,6 +85,23 @@ class MainActivity : AppCompatActivity() {
         fab_redo.setOnClickListener {
             draw_view.redo()
         }
+        fab_bckrd_color.setOnClickListener {
+            showColorPicker(isBrushColor = false)
+        }
+        fab_gallery.setOnClickListener {
+            goToDrawingGallery()
+        }
+    }
+
+    private fun startShakeListener() {
+        val shakeListener = object : ShakeDetector.ShakeListener {
+            override fun onShakeDetected() {
+                draw_view.undo()
+            }
+
+            override fun onShakeStopped() {}
+        }
+        Sensey.getInstance().startShakeDetection(14.0F,20L,shakeListener)
     }
 
     override fun onPause() {
@@ -88,23 +109,23 @@ class MainActivity : AppCompatActivity() {
         viewModel.savePaths(draw_view.mPaths)
     }
 
-    private fun showColorPicker() {
-        val currentColor = viewModel.color.value ?: getColor(R.color.colorPrimary)
-        Toast.makeText(this, currentColor.toString(), Toast.LENGTH_SHORT).show()
+    private fun showColorPicker(isBrushColor: Boolean) {
+
+        val dialogTitle = if (isBrushColor) "Choose brush color" else "Choose background color"
         ColorPickerDialogBuilder
             .with(this@MainActivity)
             .setTitle("Choose color")
-  //          .initialColor(currentColor)
-//            .alphaSliderOnly()
             .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
 
             .density(12)
-            .setOnColorSelectedListener { selectedColor ->
-                Toast.makeText(this, selectedColor.toString(), Toast.LENGTH_SHORT).show()
-            }
             .setPositiveButton(
                 "ok"
-            ) { dialog, selectedColor, allColors -> viewModel.color.postValue(selectedColor) }
+            ) { _, selectedColor, _ ->
+                if (isBrushColor)
+                    viewModel.color.postValue(selectedColor)
+                else
+                    viewModel.backgroudColor.postValue(selectedColor)
+            }
             .setNegativeButton("cancel") { dialog, which -> }
             .build()
             .show()
@@ -168,19 +189,32 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun saveFile(fileName: String) {
-        val fileDir = "${Environment.DIRECTORY_PICTURES}/PaintMobile/"
-        val path = Environment.getExternalStoragePublicDirectory(fileDir)
+
+
         val file = File(path, "$fileName.png")
         path.mkdirs()
         file.createNewFile()
         val outputStream = FileOutputStream(file)
         val bitmap = draw_view.getBitmap()
             .apply {
-                compress(Bitmap.CompressFormat.PNG,100,outputStream)
+                compress(Bitmap.CompressFormat.PNG, 100, outputStream)
             }
         outputStream.flush()
         outputStream.close()
-        MediaScannerConnection.scanFile(this, arrayOf(file.toString()), null,null)
+        MediaScannerConnection.scanFile(this, arrayOf(file.toString()), null, null)
+    }
+
+    private fun goToDrawingGallery() {
+        val intent = Intent().apply {
+            action = Intent.ACTION_VIEW
+            setDataAndType(
+                Uri.parse((Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).path) + "/PaintMobile"),
+                "image/*"
+            )
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        //startActivity(Intent.createChooser(intent,"Drawing gallery"))
+        startActivity(intent)
     }
 
     private fun saveImage() {
@@ -210,5 +244,10 @@ class MainActivity : AppCompatActivity() {
             this.applicationContext,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    companion object {
+        private val fileDir = "${Environment.DIRECTORY_PICTURES}/PaintMobile/"
+        private val path = Environment.getExternalStoragePublicDirectory(fileDir)
     }
 }

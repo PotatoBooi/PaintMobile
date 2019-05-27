@@ -1,6 +1,5 @@
 package com.damianf.paintmobile.viewmodel
 
-import android.graphics.Bitmap
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.damianf.paintmobile.utils.DEFAULT_STROKE
@@ -14,6 +13,7 @@ class MainViewModel : ViewModel(){
 
     val drawing = MutableLiveData<LinkedHashMap<MyPath,PaintOptions>>()
     val color = MutableLiveData<Int>()
+    val backgroudColor = MutableLiveData<Int>()
     val stroke = MutableLiveData<Float>().apply {
         if (value == null ) value = DEFAULT_STROKE
     }

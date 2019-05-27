@@ -42,4 +42,5 @@ dependencies {
     kapt "androidx.lifecycle:lifecycle-compiler:2.0.0"
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.karumi:dexter:5.0.0'
+    implementation 'com.github.nisrulz:sensey:1.8.0'
 }
