@@ -41,22 +41,24 @@
     </androidx.cardview.widget.CardView>
     <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_width="wrap_content"
                                                                            android:layout_height="wrap_content"
+                                                                           android:visibility="gone"
                                                                            android:id="@+id/fab_gallery"
                                                                            app:layout_constraintTop_toTopOf="@+id/fab_save"
                                                                            app:layout_constraintRight_toLeftOf="@id/fab_save"
                                                                            app:layout_constraintBottom_toBottomOf="@id/fab_save"
                                                                            android:src="@drawable/ic_photo_white_24dp"
-                                                                           android:layout_marginRight="16dp"/>
+                                                                           android:layout_marginEnd="16dp"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="true" app:srcCompat="@drawable/ic_save_white_24dp"
+            app:srcCompat="@drawable/ic_save_white_24dp"
             android:id="@+id/fab_save"
             app:fabSize="auto"
             android:layout_marginTop="16dp"
             app:layout_constraintTop_toTopOf="parent" android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline3"/>
+            app:layout_constraintBottom_toTopOf="@+id/guideline3"
+            android:contentDescription="@string/save_drawing_string"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,7 +69,8 @@
             android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/fab_undo"
-            app:layout_constraintEnd_toStartOf="@+id/fab_colors"/>
+            app:layout_constraintEnd_toStartOf="@+id/fab_colors"
+            android:contentDescription="@string/redo_changes_strings"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -84,6 +87,7 @@
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/change_brush_color_string"
             android:clickable="true" app:srcCompat="@drawable/ic_color_lens_white_24dp"
             android:id="@+id/fab_colors"
             android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
@@ -99,7 +103,8 @@
             android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/fab_bckrd_color"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"/>
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:contentDescription="@string/change_brush_width"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_width="wrap_content"
                                                                            android:layout_height="wrap_content"
                                                                            android:id="@+id/fab_bckrd_color"
@@ -110,7 +115,8 @@
                                                                            app:layout_constraintBottom_toBottomOf="parent"
                                                                            android:layout_marginTop="8dp"
                                                                            app:layout_constraintTop_toTopOf="@+id/guideline"
-                                                                           android:src="@drawable/ic_format_color_fill_white_24dp"/>
+                                                                           android:src="@drawable/ic_format_color_fill_white_24dp"
+    android:contentDescription="@string/change_background_color"/>
     <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="0dp"

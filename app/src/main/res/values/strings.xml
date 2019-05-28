@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">PaintMobile</string>
+    <string name="save_drawing_string">Save drawing</string>
+    <string name="redo_changes_strings">Redo changes</string>
+    <string name="change_brush_color_string">Change brush color</string>
+    <string name="change_background_color">Change background color</string>
+    <string name="change_brush_width">Change brush width</string>
 </resources>

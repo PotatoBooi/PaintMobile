@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
             showColorPicker(isBrushColor = false)
         }
         fab_gallery.setOnClickListener {
-            goToDrawingGallery()
+          //  goToDrawingGallery()
         }
     }
 
@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onShakeStopped() {}
         }
-        Sensey.getInstance().startShakeDetection(14.0F,20L,shakeListener)
+        Sensey.getInstance().startShakeDetection(14.0F,10L,shakeListener)
     }
 
     override fun onPause() {
@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
         val dialogTitle = if (isBrushColor) "Choose brush color" else "Choose background color"
         ColorPickerDialogBuilder
             .with(this@MainActivity)
-            .setTitle("Choose color")
+            .setTitle(dialogTitle)
             .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
 
             .density(12)
@@ -208,13 +208,13 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent().apply {
             action = Intent.ACTION_VIEW
             setDataAndType(
-                Uri.parse((Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).path) + "/PaintMobile"),
+                Uri.parse((Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).path)),
                 "image/*"
             )
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
-        //startActivity(Intent.createChooser(intent,"Drawing gallery"))
-        startActivity(intent)
+        startActivity(Intent.createChooser(intent,"Drawing gallery"))
+       // startActivity(intent)
     }
 
     private fun saveImage() {
