@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity() {
     private fun startShakeListener() {
         val shakeListener = object : ShakeDetector.ShakeListener {
             override fun onShakeDetected() {
-                draw_view.undo()
+                draw_view.clearCanvas()
             }
 
             override fun onShakeStopped() {}
